@@ -1,6 +1,6 @@
 # Voice-Bot-v2
  discord bot which record Voice Channel in ogg format and upload to S3
-# 🎙️ Discord Voice Transcription Bot (with Gemini AI)
+# 🎙️ Discord Voice Recorder
 
 A powerful **Discord bot** that records all users in a **voice channel**, and saves the conservation in the **.ogg audio format**.
 Each user’s speech is accurately labeled with their Discord username — creating clean audio directly from voice chats.
