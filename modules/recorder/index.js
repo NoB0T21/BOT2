@@ -5,7 +5,11 @@ import fs from "fs";
 import path from "path";
 import { startUserRecording } from "./userRecorder.js";
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 export const startRecording = async (channel) => {
     const connection = joinVoiceChannel({

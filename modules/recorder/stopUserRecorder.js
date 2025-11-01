@@ -5,8 +5,10 @@ import {stoppedUsers, userStreams} from "../../states/state.js"
 import { uploadAudioToS3} from "../uploadToAWS.js"
 
 
-export const  stopUserRecording = (interaction, userId, streamData, connection) => {
-  const { ffmpeg, opusStream, oggPath, username, startTime } = streamData;
+export const  stopUserRecording = async(interaction, userId, streamData, connection) => {
+  const { ffmpeg, opusStream, wavPath, username, startTime } = streamData;
+
+  await interaction.deferReply({ ephemeral: true });
 
   opusStream.unpipe();
   if (!ffmpeg.killed) {
@@ -30,10 +32,10 @@ export const  stopUserRecording = (interaction, userId, streamData, connection) 
     )
     .setTimestamp();
 
-    if (fs.existsSync(oggPath)) {
+    if (fs.existsSync(wavPath)) {
         await interaction.channel.send({
             embeds: [embed],
-            files: [oggPath],
+            files: [wavPath],
         });
     }
 
@@ -45,20 +47,18 @@ export const  stopUserRecording = (interaction, userId, streamData, connection) 
       await interaction.channel.send("👋 All recordings stopped. Bot left the voice channel.");
     }
 
-    const feedbackEmbed = new EmbedBuilder()
-    .setColor("Blue")
-    .setTitle("🛑 Recording Stopped")
-    .setDescription(`Your recording has been stopped, **${username}**.`)
-    .setTimestamp();
+    // ✅ Upload to S3 after recording saved
+    const s3Url = await uploadAudioToS3(wavPath, username);
 
-    await interaction.reply({ embeds: [feedbackEmbed], ephemeral: true });
+    if (s3Url) {
+      await interaction.channel.send({
+        content: `🎧 Recording uploaded to S3: ${s3Url}`,
+      });
+    }
+
+    // ✅ Final response after defer
+    await interaction.editReply({
+      content: `🛑 Recording stopped for **${username}** — upload complete ✅`,
+    });
   })
-
-   const s3Url = await uploadAudioToS3(oggPath, username);
-
-   if (s3Url) {
-     await interaction.channel.send({
-       content: `🎧 Recording uploaded to S3: ${s3Url}`,
-     });
-   }
 }

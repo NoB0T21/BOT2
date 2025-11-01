@@ -8,9 +8,9 @@ export const uploadAudioToS3 = async (filePath, username) => {
 
     const uploadParams = {
       Bucket: process.env.BUCKET_NAME,
-      Key: `recordings/${username}-${Date.now()}.ogg`, // file path inside S3
+      Key: `recordings/${username}-${Date.now()}.wav`, // file path inside S3
       Body: fileStream,
-      ContentType: "audio/ogg",
+      ContentType: "audio/wav",
     };
 
     const data = await s3.send(new PutObjectCommand(uploadParams));
