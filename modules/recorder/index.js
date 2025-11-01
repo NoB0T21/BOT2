@@ -4,7 +4,6 @@ import { joinVoiceChannel } from "@discordjs/voice";
 import fs from "fs";
 import path from "path";
 import { startUserRecording } from "./userRecorder.js";
-
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -24,5 +23,7 @@ export const startRecording = async (channel) => {
     const outputDir = path.join(__dirname, "../../recordings");
     fs.mkdirSync(outputDir, { recursive: true });
 
-    connection.receiver.speaking.on("start", (userId) => startUserRecording(channel, receiver, userId, outputDir));
+    connection.receiver.speaking.on("start", async (userId) => {
+        startUserRecording(channel, receiver, userId, outputDir, connection);
+    });
 }

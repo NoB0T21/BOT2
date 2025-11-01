@@ -3,10 +3,12 @@ import fs from "fs";
 import { EmbedBuilder } from "discord.js";
 import {stoppedUsers, userStreams} from "../../states/state.js"
 import { uploadAudioToS3} from "../uploadToAWS.js"
+import { stopSession } from "../../stripe/voice/session.js";
 
 
 export const  stopUserRecording = async(interaction, userId, streamData, connection) => {
   const { ffmpeg, opusStream, wavPath, username, startTime } = streamData;
+  const GUILD_ID = process.env.GUILD_ID;
 
   await interaction.deferReply({ ephemeral: true });
 
@@ -32,18 +34,20 @@ export const  stopUserRecording = async(interaction, userId, streamData, connect
     )
     .setTimestamp();
 
+    
     if (fs.existsSync(wavPath)) {
-        await interaction.channel.send({
-            embeds: [embed],
-            files: [wavPath],
-        });
+      await interaction.channel.send({
+        embeds: [embed],
+        files: [wavPath],
+      });
     }
-
+    
     stoppedUsers.add(userId);
     userStreams.delete(userId);
-
+    
+    
     if (userStreams.size === 0) {
-      connection.destroy();
+      await stopSession(GUILD_ID)
       await interaction.channel.send("👋 All recordings stopped. Bot left the voice channel.");
     }
 
