@@ -5,7 +5,7 @@ import {stoppedUsers, userStreams} from "../../states/state.js"
 import { uploadAudioToS3} from "../uploadToAWS.js"
 
 
-export const  stopUserRecording = (interaction, userId, streamData, connection) => {
+export const  stopUserRecording = async (interaction, userId, streamData, connection) => {
   const { ffmpeg, opusStream, oggPath, username, startTime } = streamData;
 
   opusStream.unpipe();
