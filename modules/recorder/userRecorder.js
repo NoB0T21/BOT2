@@ -15,7 +15,8 @@ export const startUserRecording =  (channel, receiver, userId, outputDir) => {
     if (userStreams.has(userId)) return;
 
     const username = member.user.username;
-    const oggPath = path.join(outputDir, `${username}-${Date.now()}.ogg`);
+    //const oggPath = path.join(outputDir, `${username}-${Date.now()}.ogg`);
+    const wavPath = path.join(outputDir, `${username}-${Date.now()}.wav`);
     const startTime = Date.now();
 
     console.log(`🎤 ${username} started speaking, recording...`);
@@ -30,17 +31,27 @@ export const startUserRecording =  (channel, receiver, userId, outputDir) => {
         frameSize: 960,
     });
 
+    // const ffmpeg = spawn("ffmpeg", [
+    //     "-f","s16le",
+    //     "-ar","48000",
+    //     "-ac","1",
+    //     "-i","pipe:0",
+    //     "-acodec", "libopus",
+    //     "-b:a", "128k", 
+    //     "-vbr", "on",          
+    //     "-compression_level", "10",
+    //     "-f","ogg",
+    //     oggPath,
+    // ]);
+
     const ffmpeg = spawn("ffmpeg", [
-        "-f","s16le",
-        "-ar","48000",
-        "-ac","1",
-        "-i","pipe:0",
-        "-acodec", "libopus",
-        "-b:a", "128k", 
-        "-vbr", "on",          
-        "-compression_level", "10",
-        "-f","ogg",
-        oggPath,
+        "-f", "s16le",       
+        "-ar", "48000",      
+        "-ac", "1",          
+        "-i", "pipe:0",      
+        "-acodec", "pcm_s16le",
+        "-f", "wav",         
+        wavPath,
     ]);
 
     opusStream.pipe(decoder).pipe(ffmpeg.stdin);
