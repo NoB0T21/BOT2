@@ -61,5 +61,5 @@ export const startUserRecording =  (channel, receiver, userId, outputDir) => {
         console.log(`✅ Saved ${username}'s recording (${durationSec}s)`);
     });
 
-    userStreams.set(userId, { ffmpeg, opusStream, oggPath, username, startTime });
+    userStreams.set(userId, { ffmpeg, opusStream, wavPath, username, startTime });
 }
