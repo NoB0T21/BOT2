@@ -54,11 +54,11 @@ export const  stopUserRecording = (interaction, userId, streamData, connection) 
     await interaction.reply({ embeds: [feedbackEmbed], ephemeral: true });
   })
 
-  // const s3Url = await uploadAudioToS3(oggPath, username);
+   const s3Url = await uploadAudioToS3(oggPath, username);
 
-  // if (s3Url) {
-  //   await interaction.channel.send({
-  //     content: `🎧 Recording uploaded to S3: ${s3Url}`,
-  //   });
-  // }
+   if (s3Url) {
+     await interaction.channel.send({
+       content: `🎧 Recording uploaded to S3: ${s3Url}`,
+     });
+   }
 }
