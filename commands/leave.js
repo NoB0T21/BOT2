@@ -4,19 +4,21 @@ import { getVoiceConnection } from "@discordjs/voice";
 import { userStreams} from "../states/state.js"
 
 export const Leave = async (interaction) => {
-    const connection = getVoiceConnection(interaction.guild.id);
+    const guildId = interaction.guildId;
+    const connection = getVoiceConnection(guildId);
 
-    if (!guild)
+    if (!guildId)
         return interaction.reply({
             content: "❌ This command can only be used in a server.",
             flags: 1 << 6,
         });
 
-    if (!connection)
+    if (!connection){
         return interaction.reply({
             content: "❌ Bot is not connected to a voice channel.",
             flags: 1 << 6,
         });
+    }
 
     for (const [userId, { ffmpeg, opusStream, username }] of userStreams.entries()) {
         try {
